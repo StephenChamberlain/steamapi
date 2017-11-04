@@ -5,7 +5,7 @@ from .decorators import cached_property, INFINITE
 
 
 class SteamApp(SteamObject):
-    def __init__(self, appid, name=None, owner=None):
+    def __init__(self, appid, name=None, owner=None, img_icon_url=None, img_logo_url=None):
         self._id = appid
         if name is not None:
             import time
@@ -18,6 +18,8 @@ class SteamApp(SteamObject):
         # object's context, but in the object creator's context.
         self._owner = owner
         self._userid = self._owner
+        self._img_icon_url = img_icon_url
+        self._img_logo_url = img_logo_url
 
     # Factory methods
     @staticmethod
@@ -41,8 +43,12 @@ class SteamApp(SteamObject):
         name = None
         if 'name' in api_json:
             name = api_json.name
+        if 'img_icon_url' in api_json:
+            img_icon_url = api_json.img_icon_url
+        if 'img_logo_url' in api_json:
+            img_logo_url = api_json.img_logo_url
 
-        return SteamApp(appid, name, associated_userid)
+        return SteamApp(appid, name, associated_userid, img_icon_url, img_logo_url)
 
     @cached_property(ttl=INFINITE)
     def _schema(self):
@@ -51,6 +57,14 @@ class SteamApp(SteamObject):
     @property
     def appid(self):
         return self._id
+
+    @property
+    def img_icon_url(self):
+        return self._img_icon_url
+
+    @property
+    def img_logo_url(self):
+        return self._img_logo_url
 
     @cached_property(ttl=INFINITE)
     def achievements(self):
